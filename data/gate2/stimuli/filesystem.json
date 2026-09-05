@@ -1,0 +1,65 @@
+[
+ {
+  "id": "FS01",
+  "ungroundable": "Show me what's in our staging directory.",
+  "groundable_known": "Show me what's in the src directory.",
+  "groundable_unknown": "Show me what's in the vendorcache directory.",
+  "expected_tool": "list_directory"
+ },
+ {
+  "id": "FS02",
+  "ungroundable": "Read the contents of our deployment config file.",
+  "groundable_known": "Read the contents of the package.json file.",
+  "groundable_unknown": "Read the contents of the buildspec.lock file.",
+  "expected_tool": "read_text_file"
+ },
+ {
+  "id": "FS03",
+  "ungroundable": "Find all files related to our authentication module.",
+  "groundable_known": "Find all files related to the auth.py module.",
+  "groundable_unknown": "Find all files related to the credflow.py module.",
+  "expected_tool": "search_files"
+ },
+ {
+  "id": "FS04",
+  "ungroundable": "Check the size and last-modified time of our main log file.",
+  "groundable_known": "Check the size and last-modified time of the server.log file.",
+  "groundable_unknown": "Check the size and last-modified time of the runtime.trace file.",
+  "expected_tool": "get_file_info"
+ },
+ {
+  "id": "FS07",
+  "ungroundable": "Read our two main config files together.",
+  "groundable_known": "Read package.json and tsconfig.json together.",
+  "groundable_unknown": "Read buildspec.lock and vendor.pins together.",
+  "expected_tool": "read_multiple_files"
+ },
+ {
+  "id": "FS08",
+  "ungroundable": "How much space is our build output taking up?",
+  "groundable_known": "How much space is the dist directory taking up?",
+  "groundable_unknown": "How much space is the outforge directory taking up?",
+  "expected_tool": "list_directory_with_sizes"
+ },
+ {
+  "id": "FS09",
+  "ungroundable": "Add a note to the top of our main entry point file.",
+  "groundable_known": "Add a note to the top of index.js.",
+  "groundable_unknown": "Add a note to the top of bootstrap.mjs.",
+  "expected_tool": "edit_file"
+ },
+ {
+  "id": "FS10",
+  "ungroundable": "Make a directory for our new integration tests.",
+  "groundable_known": "Make a directory called tests/integration.",
+  "groundable_unknown": "Make a directory called tests/harnkeep.",
+  "expected_tool": "create_directory"
+ },
+ {
+  "id": "FS11",
+  "ungroundable": "Find everything under our shared utilities area.",
+  "groundable_known": "Find everything under the lib/utils directory.",
+  "groundable_unknown": "Find everything under the lib/quorndale directory.",
+  "expected_tool": "search_files"
+ }
+]

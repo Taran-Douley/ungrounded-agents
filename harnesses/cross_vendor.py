@@ -279,6 +279,25 @@ def call(spec, prompt, variant, mock, rng, cond, base_url, keys):
                 else:
                     return [], f"HTTP 400: {body[:180]}"
                 continue
+            # OpenAI returns exhausted credit as 429 with type
+            # "insufficient_quota". It is not rate limiting and will never
+            # succeed on retry: retrying it costs ~6 minutes of backoff per
+            # trial and makes a dead account look like a merely slow run.
+            # Observed 5 Sep 2026 - a model crawled at 7 trials/min against
+            # another's 160 and would have logged nothing but errors for
+            # 5.7 hours. Fail loudly instead.
+            # OpenAI signals an exhausted account with 429 insufficient_quota;
+            # Anthropic with 400 "credit balance is too low". This check must
+            # come before the 400 parameter-stripping branch below, which would
+            # otherwise strip a parameter, retry, and fail identically.
+            if (r.status_code in (400, 429)
+                    and ("insufficient_quota" in body
+                         or "credit_balance" in body
+                         or "no credits remaining" in body
+                         or "credit balance is too low" in body)):
+                return [], ("FATAL: account out of credits (HTTP 429 "
+                            "insufficient_quota) - add credits and rerun "
+                            "to resume")
             if r.status_code == 429 and attempt < 7:
                 ra = r.headers.get("retry-after")
                 wait = float(ra) if ra and ra.isdigit() else min(delay * 3, 90)
@@ -373,9 +392,11 @@ def main():
     if new:
         w.writerow(["model", "variant", "set", "idx", "condition", "run",
                     "prompt", "status", "tools_called", "decoy_called", "error"])
-    lock = threading.Lock(); n = [0]; errs = [0]
+    lock = threading.Lock(); n = [0]; errs = [0]; fatal = [None]
 
     def work(t):
+        if fatal[0]:
+            return                    # stop issuing calls once the run is dead
         spec, variant, setname, idx, cond, text, run = t
         rng = random.Random(f"{spec}|{variant}|{setname}|{idx}|{cond}|{run}")
         called, err = call(spec, text, variant, args.mock, rng, cond,
@@ -390,7 +411,9 @@ def main():
             n[0] += 1
             if err:
                 errs[0] += 1
-                if errs[0] <= 3:
+                if err.startswith("FATAL"):
+                    fatal[0] = err
+                if errs[0] <= 3 or err.startswith("FATAL"):
                     print(f"  ERROR {spec}: {err}", file=sys.stderr)
             if n[0] % 200 == 0:
                 print(f"  {n[0]}/{len(todo)}  errors={errs[0]}", file=sys.stderr)
@@ -403,7 +426,11 @@ def main():
     finally:
         fh.close()
 
-    if errs[0]:
+    if fatal[0]:
+        print(f"\nRUN ABORTED: {fatal[0]}", file=sys.stderr)
+        print("Rows already written are valid and resume normally.",
+              file=sys.stderr)
+    elif errs[0]:
         print(f"\n{errs[0]} errors. Rerun the same command to retry them "
               f"(drop error rows first).", file=sys.stderr)
     analyse(csv_path)

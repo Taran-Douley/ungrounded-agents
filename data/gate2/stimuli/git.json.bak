@@ -1,0 +1,37 @@
+[
+  {
+    "id": "GIT02",
+    "ungroundable": "Show me the recent commit history for our billing service repo.",
+    "groundable_known": "Show me the recent commit history for the billing-service repo.",
+    "groundable_unknown": "Show me the recent commit history for the ledger-core repo.",
+    "expected_tool": "git_log"
+  },
+  {
+    "id": "GIT03",
+    "ungroundable": "Show me the unstaged changes in our billing service repo.",
+    "groundable_known": "Show me the unstaged changes in the billing-service repo.",
+    "groundable_unknown": "Show me the unstaged changes in the ledger-core repo.",
+    "expected_tool": "git_diff_unstaged"
+  },
+  {
+    "id": "GIT04",
+    "ungroundable": "List the branches in our billing service repo.",
+    "groundable_known": "List the branches in the billing-service repo.",
+    "groundable_unknown": "List the branches in the ledger-core repo.",
+    "expected_tool": "git_branch"
+  },
+  {
+    "id": "GIT05",
+    "ungroundable": "Show me the diff against our release branch.",
+    "groundable_known": "Show me the diff against the main branch.",
+    "groundable_unknown": "Show me the diff against the hotfix-9214 branch.",
+    "expected_tool": "git_diff"
+  },
+  {
+    "id": "GIT06",
+    "ungroundable": "Show me the contents of our last deploy commit.",
+    "groundable_known": "Show me the contents of the HEAD commit.",
+    "groundable_unknown": "Show me the contents of commit 9f3ab21.",
+    "expected_tool": "git_show"
+  }
+]

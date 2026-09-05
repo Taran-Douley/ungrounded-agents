@@ -1,0 +1,13 @@
+  checking credentials with one call...
+  540 trials (9 triples x 3 conditions x 20 runs)
+  50/540
+  100/540
+  150/540
+  200/540
+  250/540
+  300/540
+  350/540
+  400/540
+  450/540
+  500/540
+  per-trial data written to gate2/results_ow/filesystem_openai_gpt-oss-120b.csv

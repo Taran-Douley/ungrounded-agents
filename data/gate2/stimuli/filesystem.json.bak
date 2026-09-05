@@ -1,0 +1,30 @@
+[
+  {
+    "id": "FS01",
+    "ungroundable": "Show me what's in our staging directory.",
+    "groundable_known": "Show me what's in the src directory.",
+    "groundable_unknown": "Show me what's in the vendorcache directory.",
+    "expected_tool": "list_directory"
+  },
+  {
+    "id": "FS02",
+    "ungroundable": "Read the contents of our deployment config file.",
+    "groundable_known": "Read the contents of the package.json file.",
+    "groundable_unknown": "Read the contents of the buildspec.lock file.",
+    "expected_tool": "read_text_file"
+  },
+  {
+    "id": "FS03",
+    "ungroundable": "Find all files related to our authentication module.",
+    "groundable_known": "Find all files related to the auth.py module.",
+    "groundable_unknown": "Find all files related to the credflow.py module.",
+    "expected_tool": "search_files"
+  },
+  {
+    "id": "FS04",
+    "ungroundable": "Check the size and last-modified time of our main log file.",
+    "groundable_known": "Check the size and last-modified time of the server.log file.",
+    "groundable_unknown": "Check the size and last-modified time of the runtime.trace file.",
+    "expected_tool": "get_file_info"
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "model": "openai:google/gemma-4-31b-it",
+  "decoy": "git_status",
+  "runs": 20,
+  "stimuli_id": "custom-11-3c2a633d",
+  "catalogue_id": "custom-12-6a6c23d8",
+  "config": {
+    "max_tokens": 1024,
+    "temperature": 1.0
+  },
+  "n_triples": 11,
+  "n_trials": 660,
+  "rates": {
+    "ungroundable": 10.454545454545455,
+    "groundable_unknown": 9.090909090909092,
+    "groundable_known": 16.818181818181817
+  },
+  "correct_tool_rates": {
+    "ungroundable": 27.272727272727273,
+    "groundable_known": 65.45454545454545,
+    "groundable_unknown": 78.18181818181819
+  },
+  "difference_pp": -7.045454545454543,
+  "p_cluster_permutation": 0.07179641017949102,
+  "p_note": "",
+  "prompts_firing": 3,
+  "n_errors": 0,
+  "resolution_floor": 0.0009765625,
+  "scorecard": {
+    "model": "openai:google/gemma-4-31b-it",
+    "grounded": 65.45454545454545,
+    "ungrounded": 27.272727272727273,
+    "unfamiliar": 78.18181818181819,
+    "ci_grounded": [
+      39.09090909090909,
+      88.18181818181819
+    ],
+    "ci_ungrounded": [
+      0.0,
+      54.54545454545454
+    ],
+    "decoy_ungrounded": 10.454545454545455,
+    "gap_pp": 38.18181818181818,
+    "retention": 0.4166666666666667,
+    "p": 0.029898505074746264,
+    "p_note": "",
+    "prompts_firing": 3,
+    "n_triples": 11,
+    "n_trials": 660,
+    "runs": 20,
+    "decoy": "git_status",
+    "stimuli_id": "custom-11-3c2a633d",
+    "catalogue_id": "custom-12-6a6c23d8",
+    "verdict": "DEGRADED",
+    "reading": "tool choice is noticeably worse without a groundable entity",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}
