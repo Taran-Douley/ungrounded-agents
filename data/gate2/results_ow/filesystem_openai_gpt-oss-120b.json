@@ -1,0 +1,61 @@
+{
+  "model": "openai:openai/gpt-oss-120b",
+  "decoy": "list_allowed_directories",
+  "runs": 20,
+  "stimuli_id": "custom-9-0533ccac",
+  "catalogue_id": "custom-14-c850c6e8",
+  "config": {
+    "max_tokens": 1024,
+    "temperature": 1.0
+  },
+  "n_triples": 9,
+  "n_trials": 540,
+  "rates": {
+    "ungroundable": 97.22222222222223,
+    "groundable_unknown": 68.33333333333333,
+    "groundable_known": 67.77777777777777
+  },
+  "correct_tool_rates": {
+    "ungroundable": 0.5555555555555556,
+    "groundable_known": 19.444444444444443,
+    "groundable_unknown": 13.88888888888889
+  },
+  "difference_pp": 15.0,
+  "p_cluster_permutation": 0.13804309784510774,
+  "p_note": "",
+  "prompts_firing": 9,
+  "n_errors": 0,
+  "resolution_floor": 0.00390625,
+  "scorecard": {
+    "model": "openai:openai/gpt-oss-120b",
+    "grounded": 19.444444444444443,
+    "ungrounded": 0.5555555555555556,
+    "unfamiliar": 13.88888888888889,
+    "ci_grounded": [
+      4.444444444444445,
+      41.66666666666667
+    ],
+    "ci_ungrounded": [
+      0.0,
+      1.6666666666666667
+    ],
+    "decoy_ungrounded": 97.22222222222223,
+    "gap_pp": 18.888888888888886,
+    "retention": null,
+    "p": 0.06284685765711714,
+    "p_note": "",
+    "prompts_firing": 9,
+    "n_triples": 9,
+    "n_trials": 540,
+    "runs": 20,
+    "decoy": "list_allowed_directories",
+    "stimuli_id": "custom-9-0533ccac",
+    "catalogue_id": "custom-14-c850c6e8",
+    "verdict": "INCONCLUSIVE",
+    "reading": "the model reaches the right tool only 19.4% of the time even when the entity is familiar, so this says nothing about grounding",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}

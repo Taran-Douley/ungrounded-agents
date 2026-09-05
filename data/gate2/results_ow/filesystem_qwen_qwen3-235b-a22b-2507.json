@@ -1,0 +1,61 @@
+{
+  "model": "openai:qwen/qwen3-235b-a22b-2507",
+  "decoy": "list_allowed_directories",
+  "runs": 20,
+  "stimuli_id": "custom-9-0533ccac",
+  "catalogue_id": "custom-14-c850c6e8",
+  "config": {
+    "max_tokens": 1024,
+    "temperature": 1.0
+  },
+  "n_triples": 9,
+  "n_trials": 540,
+  "rates": {
+    "ungroundable": 95.0,
+    "groundable_unknown": 33.333333333333336,
+    "groundable_known": 25.555555555555557
+  },
+  "correct_tool_rates": {
+    "ungroundable": 0.5555555555555556,
+    "groundable_known": 36.666666666666664,
+    "groundable_unknown": 45.0
+  },
+  "difference_pp": 38.611111111111114,
+  "p_cluster_permutation": 0.02759862006899655,
+  "p_note": "",
+  "prompts_firing": 9,
+  "n_errors": 0,
+  "resolution_floor": 0.00390625,
+  "scorecard": {
+    "model": "openai:qwen/qwen3-235b-a22b-2507",
+    "grounded": 36.666666666666664,
+    "ungrounded": 0.5555555555555556,
+    "unfamiliar": 45.0,
+    "ci_grounded": [
+      11.666666666666666,
+      66.66666666666666
+    ],
+    "ci_ungrounded": [
+      0.0,
+      1.6666666666666667
+    ],
+    "decoy_ungrounded": 95.0,
+    "gap_pp": 36.11111111111111,
+    "retention": 0.015151515151515154,
+    "p": 0.031548422578871055,
+    "p_note": "",
+    "prompts_firing": 9,
+    "n_triples": 9,
+    "n_trials": 540,
+    "runs": 20,
+    "decoy": "list_allowed_directories",
+    "stimuli_id": "custom-9-0533ccac",
+    "catalogue_id": "custom-14-c850c6e8",
+    "verdict": "COLLAPSE",
+    "reading": "tool choice fails almost entirely without a groundable entity",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}

@@ -1,0 +1,16 @@
+  checking credentials with one call...
+  660 trials (11 triples x 3 conditions x 20 runs)
+  50/660
+  100/660
+  150/660
+  200/660
+  250/660
+  300/660
+  350/660
+  400/660
+  450/660
+  500/660
+  550/660
+  600/660
+  650/660
+  per-trial data written to gate2/results_ow/git_google_gemma-4-31b-it.csv

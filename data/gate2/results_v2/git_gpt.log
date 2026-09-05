@@ -1,0 +1,18 @@
+  checking credentials with one call...
+  note: this model wants 'max_completion_tokens' rather than 'max_tokens'; switched
+  note: this model requires reasoning_effort='none' to use function tools; set it (this is a deliberate configuration choice, not the API default -- report it alongside your results)
+  660 trials (11 triples x 3 conditions x 20 runs)
+  50/660
+  100/660
+  150/660
+  200/660
+  250/660
+  300/660
+  350/660
+  400/660
+  450/660
+  500/660
+  550/660
+  600/660
+  650/660
+  per-trial data written to gate2/results_v2/git_gpt.csv

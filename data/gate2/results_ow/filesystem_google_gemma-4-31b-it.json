@@ -1,0 +1,61 @@
+{
+  "model": "openai:google/gemma-4-31b-it",
+  "decoy": "list_allowed_directories",
+  "runs": 20,
+  "stimuli_id": "custom-9-0533ccac",
+  "catalogue_id": "custom-14-c850c6e8",
+  "config": {
+    "max_tokens": 1024,
+    "temperature": 1.0
+  },
+  "n_triples": 9,
+  "n_trials": 540,
+  "rates": {
+    "ungroundable": 86.66666666666667,
+    "groundable_unknown": 6.666666666666667,
+    "groundable_known": 12.222222222222221
+  },
+  "correct_tool_rates": {
+    "ungroundable": 2.2222222222222223,
+    "groundable_known": 59.44444444444444,
+    "groundable_unknown": 51.111111111111114
+  },
+  "difference_pp": 34.44444444444444,
+  "p_cluster_permutation": 0.06969651517424129,
+  "p_note": "",
+  "prompts_firing": 9,
+  "n_errors": 0,
+  "resolution_floor": 0.00390625,
+  "scorecard": {
+    "model": "openai:google/gemma-4-31b-it",
+    "grounded": 59.44444444444444,
+    "ungrounded": 2.2222222222222223,
+    "unfamiliar": 51.111111111111114,
+    "ci_grounded": [
+      30.0,
+      85.55555555555556
+    ],
+    "ci_ungrounded": [
+      0.0,
+      5.555555555555555
+    ],
+    "decoy_ungrounded": 86.66666666666667,
+    "gap_pp": 57.22222222222222,
+    "retention": 0.03738317757009346,
+    "p": 0.031748412579371034,
+    "p_note": "",
+    "prompts_firing": 9,
+    "n_triples": 9,
+    "n_trials": 540,
+    "runs": 20,
+    "decoy": "list_allowed_directories",
+    "stimuli_id": "custom-9-0533ccac",
+    "catalogue_id": "custom-14-c850c6e8",
+    "verdict": "COLLAPSE",
+    "reading": "tool choice fails almost entirely without a groundable entity",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}

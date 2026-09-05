@@ -1,0 +1,16 @@
+=== git / openai/gpt-oss-120b ===
+  exit 0
+=== filesystem / openai/gpt-oss-120b ===
+  exit 0
+=== git / meta-llama/llama-3.3-70b-instruct ===
+  exit 0
+=== filesystem / meta-llama/llama-3.3-70b-instruct ===
+  exit 0
+=== git / qwen/qwen3-235b-a22b-2507 ===
+  exit 0
+=== filesystem / qwen/qwen3-235b-a22b-2507 ===
+  exit 0
+=== git / google/gemma-4-31b-it ===
+  exit 0
+=== filesystem / google/gemma-4-31b-it ===
+  exit 0
