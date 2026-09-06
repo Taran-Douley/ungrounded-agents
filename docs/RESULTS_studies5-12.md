@@ -993,3 +993,9 @@ invention, and no correct-tool metric distinguishes any of the three.
 lexical classifier, unit-tested against hand-labelled cases but still lexical: a
 value semantically implied by the prompt but not lexically present is scored
 fabricated. The `DEFAULTS` list is a judgement call fixed before the run.
+
+---
+
+*A further study (13) applies the Study 8–9 tool-selection mechanism as a
+security attack. It is under coordinated disclosure and is intentionally not
+included in this public record.*
