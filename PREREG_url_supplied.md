@@ -73,3 +73,8 @@ Any deviation from this plan will be listed here, with the reason, before analys
   day, after a top-up. The OpenAI models therefore had no successful pilot; the harness
   code path is Study 4's, unchanged. The Anthropic results were analysed before the
   OpenAI run started; the analysis script was not changed afterwards.
+- **OpenAI pilot completed afterwards (1 Oct 2026).** The OpenAI pilot cells were re-run
+  after the full study had finished: 288 trials, 0 errors, all cells complete. It
+  confirms the wiring after the fact; it could not serve as a check beforehand. The 8
+  original failed rows remain in the pilot file. Pilot data are still excluded from
+  analysis.
