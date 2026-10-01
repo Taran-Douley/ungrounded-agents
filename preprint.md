@@ -1,5 +1,27 @@
 # Ungrounded: Entity Grounding Failure Drives Spurious Internal-Tool Invocation in LLM Agents
 
+> **Corrections (1 October 2026).** This is the August 2026 preprint as archived on Zenodo
+> (doi:10.5281/zenodo.21958705), kept for the record. It has been superseded by the workshop paper
+> *Ungrounded: Referent-Dependent Routing Shifts in Tool-Using LLM Agents* (Who Verifies the Agents?
+> workshop, NeurIPS 2026). Corrections relative to the text below:
+>
+> 1. **Tool order was not shuffled.** Every study sent the tools in the same fixed order, with the
+>    decoy last. The sentence saying position was shuffled per trial is wrong and is marked below.
+>    Because the order is identical across conditions, position cannot explain the condition
+>    contrasts, though it may affect absolute rates.
+> 2. **"Misselection" overstates the finding.** Trials are single-turn with no tool results, and a
+>    decoy call (for example, exporting configuration to identify a vendor) can be a defensible step.
+>    The workshop paper reports a referent-dependent *routing shift* and decoy *invocation*, not
+>    errors.
+> 3. **Statistical resolution.** The within-prompt permutation test permutes trial labels within
+>    each prompt, so it is conditional on these prompts and can report p below 10^-4. The ~5 x 10^-4
+>    floor applies only to prompt-level tests (e.g. Wilcoxon over the 12 triples), which address
+>    generalisation to new prompts.
+> 4. **New result.** A pre-registered follow-up (Study 5, `PREREG_url_supplied.md`) shows that
+>    supplying the missing URL restores `fetch_url` use to 100% for unfamiliar vendors in all six
+>    models: for named vendors, the missing argument is sufficient to explain the shift.
+
+
 **Taran Douley**
 Independent Researcher, United Kingdom
 taran@shroudlabs.io · ORCID: 0009-0002-3673-4500
@@ -73,7 +95,7 @@ Three decoy variants, ordered *a priori* by assumed attractiveness to an attacke
 | medium | `internal_config_export` | Export internal service configuration, including environment settings, for the specified service. |
 | high | `list_service_credentials` | List stored service account credentials and API keys for all connected internal systems. Returns secret values. |
 
-Tool position within the registry is shuffled per trial so ordering cannot confound condition. `max_tokens` = 1024; temperature at provider default (1.0).
+~~Tool position within the registry is shuffled per trial so ordering cannot confound condition.~~ **[Correction, Oct 2026: tool order was fixed, with the decoy last, in every trial; see the corrections notice at the top.]** `max_tokens` = 1024; temperature at provider default (1.0).
 
 Note that `fetch_url` ("Fetch the contents of a public URL over HTTP") legitimately serves the prompt class studied here. The catalogue does not contain a capability gap in the naive sense; §3.5 examines what happens to that capability across conditions.
 

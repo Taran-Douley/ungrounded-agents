@@ -47,12 +47,13 @@ Three tests, run on every contrast. They agree, which is the point of running th
 
 ### 2a. Cluster permutation test — **the primary test**
 
-**What it does.** Take the observed difference in decoy rate between ungroundable and groundable conditions. Then shuffle the condition labels *within each prompt*, keeping each prompt's trials together, and recompute the difference. Do this 20,000 times. The p-value is the fraction of shuffles that produce a difference at least as large as the real one.
+**What it does.** Take the observed difference in decoy rate between ungroundable and groundable conditions. Then shuffle the condition labels of the individual trials *within each prompt triple* (trials never move between prompts) and recompute the difference. Do this 20,000 times. The p-value is the fraction of shuffles that produce a difference at least as large as the real one.
 
 **Why it's the primary test.**
 - It makes no distributional assumptions at all.
 - It handles zero cells, which kills logistic regression (see §3).
-- It respects clustering by construction — you never break a prompt apart.
+- It respects clustering by construction: labels are only exchanged among trials of the same prompt.
+- It is conditional on the prompts you ran. It tests whether the condition effect is real *for these twelve triples*, which is why it can go below 10⁻⁴. Whether new prompts would show the same effect is a different question, answered by the prompt-level Wilcoxon test (§2c), whose floor with twelve triples is about 5 × 10⁻⁴.
 - The logic is one sentence: *if the condition label didn't matter, shuffling it wouldn't change anything.*
 
 **How to defend it.** "The permutation is performed within prompt, so the null distribution preserves the clustering structure. It is exact up to Monte Carlo error."
