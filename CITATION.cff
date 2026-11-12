@@ -1,31 +1,36 @@
 cff-version: 1.2.0
 title: >-
-  Ungrounded: Entity Grounding Failure Drives Spurious
-  Internal-Tool Invocation in LLM Agents
+  Ungrounded: Entity Groundability Shifts Tool Routing in LLM Agents
 message: If you use this software or data, please cite it as below.
 type: software
+version: 1.2.0
 authors:
   - given-names: Taran
     family-names: Douley
     affiliation: Independent Researcher
     orcid: 'https://orcid.org/0009-0002-3673-4500'
-repository-code: 'https://github.com/ShroudLabs/ungrounded-agents'
+repository-code: 'https://github.com/Taran-Douley/ungrounded-agents'
 abstract: >-
-  Harnesses, raw per-trial data and analysis for four studies
-  (13,470 trials, six models, two vendors) measuring spurious
-  decoy-tool invocation by benign LLM agents, and identifying
-  entity grounding failure as the driving mechanism.
+  Harnesses, raw per-trial data and analysis for five studies
+  (16,350 trials, six models, two vendors) showing that entity
+  groundability shifts tool routing in LLM agents, and that
+  supplying the missing argument removes the shift for named
+  vendors. Also includes follow-up studies on tool order,
+  reasoning effort, an entity-resolution guard, two-turn
+  consequence, content-delivered entities and real MCP servers.
 keywords:
   - LLM agents
+  - tool use
+  - tool routing
+  - entity grounding
   - Model Context Protocol
-  - deception technology
+  - agent evaluation
   - canary tokens
-  - tool selection
   - agent security
 references:
   - type: software
-    title: "ungrounded: an eval for LLM agent tool misselection"
-    repository-code: "https://github.com/ShroudLabs/ungrounded"
+    title: "ungrounded: an eval for LLM agent tool routing"
+    repository-code: "https://github.com/Taran-Douley/ungrounded"
     url: "https://pypi.org/project/ungrounded/"
 license: MIT
-date-released: '2026-08-15'
+date-released: '2026-11-12'

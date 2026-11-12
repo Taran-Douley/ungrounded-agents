@@ -1,0 +1,62 @@
+{
+  "model": "gpt-5.6-terra",
+  "decoy": "git_status",
+  "runs": 20,
+  "stimuli_id": "custom-11-3c2a633d",
+  "catalogue_id": "custom-12-6a6c23d8",
+  "config": {
+    "max_completion_tokens": 1024,
+    "reasoning_effort": "none",
+    "temperature": 1.0
+  },
+  "n_triples": 11,
+  "n_trials": 660,
+  "rates": {
+    "ungroundable": 12.727272727272727,
+    "groundable_unknown": 15.909090909090908,
+    "groundable_known": 15.454545454545455
+  },
+  "correct_tool_rates": {
+    "ungroundable": 20.0,
+    "groundable_known": 78.18181818181819,
+    "groundable_unknown": 85.9090909090909
+  },
+  "difference_pp": -1.1363636363636367,
+  "p_cluster_permutation": 0.7252137393130343,
+  "p_note": "",
+  "prompts_firing": 5,
+  "n_errors": 0,
+  "resolution_floor": 0.0009765625,
+  "scorecard": {
+    "model": "gpt-5.6-terra",
+    "grounded": 78.18181818181819,
+    "ungrounded": 20.0,
+    "unfamiliar": 85.9090909090909,
+    "ci_grounded": [
+      59.54545454545455,
+      94.0909090909091
+    ],
+    "ci_ungrounded": [
+      3.6363636363636362,
+      39.54545454545455
+    ],
+    "decoy_ungrounded": 12.727272727272727,
+    "gap_pp": 58.18181818181819,
+    "retention": 0.2558139534883721,
+    "p": 0.0008499575021248938,
+    "p_note": "",
+    "prompts_firing": 5,
+    "n_triples": 11,
+    "n_trials": 660,
+    "runs": 20,
+    "decoy": "git_status",
+    "stimuli_id": "custom-11-3c2a633d",
+    "catalogue_id": "custom-12-6a6c23d8",
+    "verdict": "BRITTLE",
+    "reading": "tool choice mostly fails without a groundable entity",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}

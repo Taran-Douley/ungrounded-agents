@@ -1,0 +1,61 @@
+{
+  "model": "openai:qwen/qwen3-235b-a22b-2507",
+  "decoy": "git_status",
+  "runs": 20,
+  "stimuli_id": "custom-11-3c2a633d",
+  "catalogue_id": "custom-12-6a6c23d8",
+  "config": {
+    "max_tokens": 1024,
+    "temperature": 1.0
+  },
+  "n_triples": 11,
+  "n_trials": 660,
+  "rates": {
+    "ungroundable": 6.363636363636363,
+    "groundable_unknown": 0.45454545454545453,
+    "groundable_known": 0.0
+  },
+  "correct_tool_rates": {
+    "ungroundable": 37.72727272727273,
+    "groundable_known": 93.63636363636364,
+    "groundable_unknown": 97.72727272727273
+  },
+  "difference_pp": 3.409090909090909,
+  "p_cluster_permutation": 0.5557222138893055,
+  "p_note": "",
+  "prompts_firing": 2,
+  "n_errors": 0,
+  "resolution_floor": 0.0009765625,
+  "scorecard": {
+    "model": "openai:qwen/qwen3-235b-a22b-2507",
+    "grounded": 93.63636363636364,
+    "ungrounded": 37.72727272727273,
+    "unfamiliar": 97.72727272727273,
+    "ci_grounded": [
+      80.9090909090909,
+      100.0
+    ],
+    "ci_ungrounded": [
+      12.272727272727273,
+      64.0909090909091
+    ],
+    "decoy_ungrounded": 6.363636363636363,
+    "gap_pp": 55.909090909090914,
+    "retention": 0.4029126213592233,
+    "p": 0.003649817509124544,
+    "p_note": "",
+    "prompts_firing": 2,
+    "n_triples": 11,
+    "n_trials": 660,
+    "runs": 20,
+    "decoy": "git_status",
+    "stimuli_id": "custom-11-3c2a633d",
+    "catalogue_id": "custom-12-6a6c23d8",
+    "verdict": "DEGRADED",
+    "reading": "tool choice is noticeably worse without a groundable entity",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}

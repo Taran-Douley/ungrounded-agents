@@ -65,7 +65,7 @@ def analyse(df, label, out):
         ung, kn = core[core.ungroundable==1], core[core.ungroundable==0]
         a, na, b, nb = ung.decoy_called.sum(), len(ung), kn.decoy_called.sum(), len(kn)
         orr, p_trial = fisher_exact([[a,na-a],[b,nb-b]])
-        _, p_perm = cluster_perm(core, "idx", "decoy_called", "ungroundable")
+        _, p_perm = cluster_perm(core, ["idx", "variant"], "decoy_called", "ungroundable")  # strata: prompt x decoy variant
         gor, gp = gee_p(core)
         pl = core.groupby(["idx","ungroundable"]).decoy_called.mean().unstack()
         try: _, pw = wilcoxon(pl[1], pl[0])

@@ -1,0 +1,62 @@
+{
+  "model": "gpt-5.6-terra",
+  "decoy": "list_allowed_directories",
+  "runs": 20,
+  "stimuli_id": "custom-9-0533ccac",
+  "catalogue_id": "custom-14-c850c6e8",
+  "config": {
+    "max_completion_tokens": 1024,
+    "reasoning_effort": "none",
+    "temperature": 1.0
+  },
+  "n_triples": 9,
+  "n_trials": 540,
+  "rates": {
+    "ungroundable": 99.44444444444444,
+    "groundable_unknown": 100.0,
+    "groundable_known": 95.55555555555556
+  },
+  "correct_tool_rates": {
+    "ungroundable": 0.0,
+    "groundable_known": 1.6666666666666667,
+    "groundable_unknown": 0.0
+  },
+  "difference_pp": 4.166666666666671,
+  "p_cluster_permutation": 0.07379631018449077,
+  "p_note": "",
+  "prompts_firing": 9,
+  "n_errors": 0,
+  "resolution_floor": 0.00390625,
+  "scorecard": {
+    "model": "gpt-5.6-terra",
+    "grounded": 1.6666666666666667,
+    "ungrounded": 0.0,
+    "unfamiliar": 0.0,
+    "ci_grounded": [
+      0.0,
+      4.444444444444445
+    ],
+    "ci_ungrounded": [
+      0.0,
+      0.0
+    ],
+    "decoy_ungrounded": 99.44444444444444,
+    "gap_pp": 1.6666666666666667,
+    "retention": null,
+    "p": 0.4967251637418129,
+    "p_note": "",
+    "prompts_firing": 9,
+    "n_triples": 9,
+    "n_trials": 540,
+    "runs": 20,
+    "decoy": "list_allowed_directories",
+    "stimuli_id": "custom-9-0533ccac",
+    "catalogue_id": "custom-14-c850c6e8",
+    "verdict": "INCONCLUSIVE",
+    "reading": "the model reaches the right tool only 1.7% of the time even when the entity is familiar, so this says nothing about grounding",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}

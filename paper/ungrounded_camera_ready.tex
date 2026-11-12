@@ -1,0 +1,228 @@
+% Camera-ready: Who Verifies the Agents? Workshop at NeurIPS 2026, submission 245.
+% Requires the unmodified neurips_2026.sty in the same folder (final option).
+\documentclass{article}
+
+\PassOptionsToPackage{numbers,sort&compress}{natbib}
+
+\usepackage[final]{neurips_2026}
+\makeatletter
+\renewcommand{\@noticestring}{Workshop on Who Verifies the Agents? Toward Reliable Agent Development, NeurIPS 2026.}
+\makeatother
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{xcolor}
+\renewcommand{\ttdefault}{lmtt}
+
+\newcommand{\tool}[1]{\texttt{#1}}
+
+\title{Ungrounded: Entity Groundability Shifts Tool Routing in LLM Agents}
+
+\author{%
+  Taran Douley\\
+  Independent Researcher, United Kingdom\\
+  \texttt{taran.singh@hotmail.co.uk}\quad ORCID \href{https://orcid.org/0009-0002-3673-4500}{0009-0002-3673-4500}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A tool-using agent has to decide which tool to call, and whether to call anything at all. Benchmarks score whether that decision was right. We ask what an agent calls when the tool that serves a request is in the catalogue but one of its arguments cannot be obtained. To make this observable we add a decoy to the registry, a tool none of our stimulus tasks requires, so unplanned internal access shows up without adjudicating each call. Across five studies and 16,350 trials the trigger is specific and reproducible: whether the agent can ground an entity in the request. \tool{fetch\_url}, the tool that serves these requests, is called in 78.1\% of trials when the entity is familiar and named, 15.1\% when it is named but unfamiliar (\emph{Northbrook CDN}), and 5.0\% when it is unnamed (\emph{our CDN provider}), with the same gradient in all six models we tested across two vendors. Traffic moves to internal search and, in five of six models, to a configuration-export decoy, which fires on up to 39\% of unnamed-referent requests. Matched controls are at zero throughout. \tool{claude-opus-5} fired once in 720 ungroundable trials while routing to search, so decoy calls are not an inevitable response to an ungroundable entity. A follow-up crossing familiarity with argument availability shows that, for named entities, the missing argument is sufficient: supplying the unfamiliar vendor's URL restores \tool{fetch\_url} to 100\% of trials in all six models, and decoy calls to zero. We observe only the first turn, so we treat these calls as unplanned privileged access, not demonstrated errors.
+\end{abstract}
+
+\section{Introduction}
+
+An agent with tools makes two decisions on every request: which tool, and whether to use one at all. Benchmarks score the first well when there is a right answer \citep{patil2025bfcl,yao2024tau}, but they are quieter about failure modes, and quietest about the case we care about here, where the tool that would serve the request is in the catalogue but cannot actually be used.
+
+The obstacle is measurement. A tool call is usually only wrong in context, so judging any particular call means reconstructing what the agent should have done instead. We sidestep part of that by borrowing an idea from security. Canary tokens \citep{thinkst2015} work because of an asymmetry: nobody legitimate has any reason to touch them. Put a tool that no stimulus task requires into an agent's registry and unplanned calls become visible on their own. Whether a particular call is wrong still depends on context (\S\ref{sec:mech}); what the decoy measures is reach into internal tooling the task did not call for.
+
+We built the decoy as a tripwire, assuming benign agents would leave it alone, and measuring its false-positive rate was meant to be a preliminary. It was not. Benign agents touch the decoy reliably, under a condition we can describe precisely, and that condition is the subject of this paper.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\itemsep0pt
+\item We show that entity groundability shifts tool routing, separating an unnamed referent from an unfamiliar named entity with matched prompts.
+\item We report routing directly: the serving tool is chosen when the entity is groundable and largely abandoned when it is not, in every model tested.
+\item We replicate across six models and two vendors (7,200 trials) with prompt-stratified inference, and find one model in which decoy invocation is not detectable at this power, a null not explained by abstention.
+\item We separate familiarity from argument availability (Study~5): for named vendors, supplying the missing URL removes the shift entirely, in every model.
+\item We propose a cheap groundable/ungroundable contrast for existing tool-use suites, and retract three earlier hypotheses with the data that overturned them.
+\end{enumerate}
+
+\section{Related work and the gap}
+
+ToolBench \citep{qin2023toolllm}, StableToolBench \citep{guo2025stable} and ToolSandbox \citep{lu2025toolsandbox} test tool use against large API collections and stateful conversation; $\tau$-bench \citep{yao2024tau} evaluates against domain policy. The Berkeley Function Calling Leaderboard \citep{patil2025bfcl} does construct under-determined prompts, stripping required parameter information and filing the result under irrelevance, where the expected behaviour is no call; a model that calls anyway is scored incorrect, and which tool it reached for is not recorded.
+
+The condition is present in existing data but discarded by its measurement. Here the serving tool is in the catalogue and is chosen when the entity can be grounded; it stops being usable only when an argument cannot be obtained. What changes is not tool identification but behaviour under a precondition that cannot be satisfied. Tool poisoning \citep{beurer2025mcp}, preference manipulation \citep{wang2025mpma} and indirect prompt injection \citep{greshake2023not} all need an adversary; nothing here does.
+
+\section{Method}
+
+\paragraph{Apparatus.} Every study uses a single-turn agent with ten realistic engineering tools plus one decoy. Tool order is fixed across trials, with the decoy listed last; position is therefore constant across conditions and cannot explain condition contrasts; a follow-up that shuffled the order per trial found no position effect (Appendix~\ref{app:followups}). No tool results are returned; each trial records the full set of calls in the first assistant turn. Three decoy variants were ranked beforehand by assumed attacker-attractiveness: batch reconciliation, configuration export, credential listing (an ordering that proved wrong, \S\ref{sec:withdrawn}). One legitimate tool, \tool{fetch\_url}, serves the prompt class we study, so the catalogue has no capability gap in the obvious sense. No stimulus task requires the decoy, but the system prompt does not prohibit it. A decoy call can therefore be an incorrect selection, unnecessarily privileged inspection, or a broad but reasonable attempt to resolve the entity; single-turn data cannot separate the last two (\S\ref{sec:mech}). Likewise, \tool{fetch\_url} is the tool that would complete the task once a URL is known, not necessarily the right next action: when the URL is unknown, a lookup or a clarifying question may be better, so a shift away from it is not in itself a failure. We call the familiar-vendor condition groundable by design; we did not verify that models can supply a correct URL. Appendix~\ref{app:method} has the prompts and descriptions.
+
+\paragraph{Studies.} Study~1 is a false-positive baseline: 101 benign prompts, 10 runs each, 3 variants, 3,030 trials. Study~2 introduces 12 matched pairs holding the task fixed and varying only the referent, an unresolved possessive against a named familiar vendor (840 trials). Study~3 adds a fictional named vendor, unambiguous but unknowable, to tell ambiguity apart from unfamiliarity (1,200 trials per model, two models). Study~4 repeats the design on six models across two vendors, at each vendor's flagship, balanced and lightweight tier, under a selection rule fixed before we saw any results. Study~5 crosses familiarity (familiar vs unfamiliar named vendor) with argument availability (status-page URL supplied in the request or not) on Study~4's twelve triples and six models, with the configuration-export decoy only (2,880 trials). Its hypotheses, tests and Holm correction were written down before any trial ran; that plan is public in the repository but was committed together with the data, so it is not independently timestamped, and we call the study planned rather than pre-registered. Two deviations are listed with it: the OpenAI models ran later the same day after an account ran out of credits, and their pilot was completed only afterwards.
+
+\paragraph{Inference.} Each prompt runs 10 times per cell, and treating those trials as independent is pseudo-replication; it matters because invocations concentrate in particular prompts (in Study~1 all nine positives came from one of 101). We report two tests that answer different questions. The primary test permutes condition labels within each prompt and decoy variant (20,000 permutations; statistic: rate difference). Under the null these independent API calls are exchangeable within a stratum, so the test is valid \emph{for these fixed stimuli}; its resolution is set by the permutation count, and we report values at that limit as $p<10^{-4}$. It does not license claims about new prompts. For that, a Wilcoxon signed-rank test on the 12 prompt-level differences treats the prompt as the unit; it cannot go below $2/2^{12}\approx 4.9\times10^{-4}$. Intervals come from a cluster bootstrap over whole prompts; GEE cross-checks are in Appendix~\ref{app:secondary}.
+
+\begin{table}[t]
+\caption{Study~4 core contrast: decoy invocation under ungroundable versus groundable entities. ``Firing'': prompt triples (of 12) with at least one invocation. Strat.\ perm.: within-prompt permutation, valid for these stimuli. Prompt-level: Wilcoxon over the 12 prompt differences, generalising to new prompts; for sol, terra, haiku and luna it equals the minimum attainable given the number of firing prompts.}
+\label{tab:core}
+\centering
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
+\toprule
+Model & Ungroundable [95\% CI] & Groundable & Strat.\ perm.\ $p$ & Prompt-level $p$ & Firing \\
+\midrule
+\tool{claude-sonnet-4-6} & 12.64\% [6.11--19.58] & 0.83\% & $<10^{-4}$ & 0.0088 & 11/12 \\
+\tool{gpt-5.6-terra}     & 10.42\% [6.11--14.72] & 1.94\% & $<10^{-4}$ & $9.8\times10^{-4}$ & 11/12 \\
+\tool{claude-haiku-4-5}  &  5.56\% [2.22--9.44]  & 1.11\% & $1.0\times10^{-4}$ & 0.0078 & 8/12 \\
+\tool{gpt-5.6-sol}       &  5.00\% [1.94--9.44]  & 0.28\% & $<10^{-4}$ & 0.0039 & 9/12 \\
+\tool{gpt-5.6-luna}      &  4.03\% [1.39--7.36]  & 0.00\% & $<10^{-4}$ & 0.031 & 6/12 \\
+\tool{claude-opus-5}     &  0.14\% [0.00--0.42]  & 0.00\% & 1 (n.s.) & 1 (n.s.) & 1/12 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\caption{Tool routing by grounding condition: share of trials invoking each tool at least once. Left: pooled over six models. Right: \tool{fetch\_url} per model.}
+\label{tab:routing}
+\centering
+\footnotesize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lccc@{\hspace{1em}}lccc}
+\toprule
+Tool (pooled) & Unnam. & Unfam. & Famil. & \tool{fetch\_url} & Unnam. & Unfam. & Famil. \\
+\midrule
+\tool{fetch\_url} (serving) & 5.0\% & 15.1\% & 78.1\% & \tool{claude-opus-5}     & 0.0\%  & 0.0\%  & 83.3\% \\
+internal search            & 67.7\% & 77.2\% & 14.7\% & \tool{claude-sonnet-4-6} & 4.7\%  & 28.6\% & 82.5\% \\
+config export (decoy)      & 5.0\% & 5.8\% & 0.3\%   & \tool{gpt-5.6-terra}     & 7.8\%  & 23.3\% & 82.2\% \\
+                           &       &       &         & \tool{gpt-5.6-luna}      & 16.4\% & 22.2\% & 79.7\% \\
+                           &       &       &         & \tool{gpt-5.6-sol}       & 0.0\%  & 5.8\%  & 77.2\% \\
+                           &       &       &         & \tool{claude-haiku-4-5}  & 0.8\%  & 10.6\% & 63.9\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Results}
+
+\paragraph{One prompt, then a class.} Study~1 found 0 to 0.59\% by variant, all nine positives from one prompt: \emph{Get the status page contents for our CDN provider}. Study~2 shows it is not a one-off. Under an unresolved referent the rate is 67/360 (18.61\%); with a named vendor it is 0/360, and controls are 0/120. Eleven of the twelve pairs fired at least once (prompt-level Wilcoxon $p=9.77\times10^{-4}$, the minimum attainable with 11 non-tied pairs). Study~3 pulls the components apart: for \tool{claude-sonnet-4-6}, 19.17\% unresolved, 11.94\% fictional vendor, 2.22\% real vendor. Per-study tables are in Appendix~\ref{app:perstudy}.
+
+\paragraph{It replicates.} Table~\ref{tab:core} gives the core contrast across six models; controls were 0/120 on every model. The within-stimulus effect is clear in five models; the prompt-level evidence is weaker but points the same way, and in four of the five every firing prompt moved in the predicted direction.
+
+\paragraph{The serving tool is present and abandoned.} Whether the agent uses \tool{fetch\_url} depends almost entirely on whether the entity can be grounded (Table~\ref{tab:routing}); the gradient holds in every model independently.
+
+\section{What we think is happening}
+\label{sec:mech}
+
+Our reading is this, and it is an interpretation of output distributions; we did not measure or intervene on a grounding mechanism. When an agent cannot ground an entity in a request, because it is unnamed or named but unfamiliar, the tool that would have served the request stops being usable, and the agent substitutes an internal-lookup tool while it works out what the entity is.
+
+Two explanations usually get offered for spurious tool calls, and this data bears on both. Semantic collision, the decoy description resembling the request, is unlikely by construction: neither a configuration export nor a credential dump sits near \emph{fetch a status page}, and the matched conditions change only the referent. A capability vacuum, where the decoy fires because nothing legitimate covers the task, is ruled out by Table~\ref{tab:routing}: the serving tool is used 78.1\% of the time when the entity is groundable. The manipulation is not clean, however: an ungroundable entity also removes the URL \tool{fetch\_url} needs, so a missing-argument account, or the model's memorised knowledge of familiar vendors, would produce the same pattern. Study~5 separates them for named vendors (Table~\ref{tab:url}). Supplying the URL of an unfamiliar vendor raises \tool{fetch\_url} use from 17.8\% to 100\% pooled, and to 100\% in each of the six models (H1: every model $p<10^{-4}$ within stimulus, prompt-level Wilcoxon $p\le0.014$ after Holm). Once the URL is present, unfamiliarity makes no further difference (H2 not supported): unfamiliar-with-URL is never below familiar-with-URL. The only gap runs the other way, in \tool{gpt-5.6-terra} (100\% vs 91.7\%), and comes from a single prompt whose URL we chose badly: for \emph{the uptime report from Amazon S3} we supplied AWS's general health dashboard, and the model called no tool. Internal search and decoy calls fall to zero in every URL-supplied cell. For named entities, then, the missing argument is sufficient to explain the shift. This does not show that grounding plays no part: the URL also makes the request more explicit, the URL cells sit at or near ceiling, so a small familiarity effect could be hidden, and the unnamed referent was not tested, since a URL cannot be supplied for an entity nobody has named without also grounding it.
+
+\begin{table}[t]
+\caption{Study~5: share of trials calling \tool{fetch\_url} (decoy invocation in brackets), named vendors only, configuration-export decoy, 120 trials per cell. Pooled row: 720 trials per cell.}
+\label{tab:url}
+\centering
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{Familiar vendor} & \multicolumn{2}{c}{Unfamiliar vendor} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Model & no URL & URL & no URL & URL \\
+\midrule
+\tool{claude-opus-5}     & 83.3 (0.0) & 100 (0) & 0.0 (0.0)  & 100 (0) \\
+\tool{claude-sonnet-4-6} & 89.2 (0.8) & 100 (0) & 38.3 (40.8) & 100 (0) \\
+\tool{claude-haiku-4-5}  & 62.5 (2.5) & 100 (0) & 12.5 (16.7) & 100 (0) \\
+\tool{gpt-5.6-sol}       & 75.0 (0.0) & 100 (0) & 9.2 (18.3)  & 100 (0) \\
+\tool{gpt-5.6-terra}     & 82.5 (0.0) & 91.7 (0) & 23.3 (14.2) & 100 (0) \\
+\tool{gpt-5.6-luna}      & 82.5 (0.0) & 98.3 (0) & 23.3 (17.5) & 100 (0) \\
+\midrule
+Pooled                   & 79.2 (0.6) & 98.3 (0) & 17.8 (17.9) & 100 (0) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On our reading, now supported for named entities by Study~5, the two explanations are consecutive. Grounding failure creates the vacuum: \tool{fetch\_url} needs a URL, there is none to supply for a provider nobody can identify, and the tool quietly becomes inapplicable. The agent then behaves as though working out the entity were a prerequisite, which may be a legitimate intermediate step; without returned tool results we cannot tell. It routes to internal search (67.7\% of unnamed-referent trials, 77.2\% of unfamiliar-vendor trials) and picks up the configuration export along the way. It would also explain which decoy fires: exporting a service configuration is a defensible way to find out which vendor an organisation uses; dumping credentials is not.
+
+\paragraph{The null model is not being cautious.} \tool{claude-opus-5} does not avoid the decoy by declining to act: its zero-tool rate is 0.0\% in every condition, and it calls \tool{search\_docs} in 716 of 720 ungroundable trials. Abstention does not explain the cross-model pattern either: under an unnamed referent, \tool{claude-haiku-4-5} abstains on 76.7\% of trials and still fires at 5.28\%, \tool{gpt-5.6-luna} abstains on 2.2\% and fires at 0.83\%, and \tool{gpt-5.6-terra} abstains on 4.7\% and fires at 15.00\%. Whatever distinguishes \tool{claude-opus-5} is not reticence but routing under uncertainty; cross-model differences do not identify its cause. At twelve triples we cannot separate a true null from a small effect, so we report it as undetected, not immune.
+
+\section{Findings we withdrew}
+\label{sec:withdrawn}
+
+Three of our hypotheses did not hold up, and we report them rather than drop them (Appendix~\ref{app:withdrawn}). The monotonic relationship we claimed between attacker-attractiveness and invocation was an artefact of pseudo-replication and disappears once the prompt is the unit of analysis. The split between ambiguity and unknowability does not generalise; its direction is model-specific. And invocation does not scale with capability: the balanced tier fires most in both vendors.
+
+\section{Limitations}
+
+The binding constraint is the stimulus set: twelve triples, generated with LLM assistance after we had formed the hypothesis, in one engineering task family, so construct-fitting cannot be ruled out and prompt-level inference is weaker than within-stimulus inference (Table~\ref{tab:core}). Trials are single-turn and return no tool results, so a decoy or search call may be a legitimate intermediate step toward resolving the entity; we measure invocation, not error or consequence. Study~5 separates groundability from argument availability for named vendors only; the unnamed referent and the entity-resolution tool our account predicts remain untested. Follow-up studies released with the data (Appendix~\ref{app:followups}) bear on several of these limits: shuffling tool order changes nothing, a second turn adds roughly a quarter more decoy calls, and an unfamiliar entity placed in retrieved content rather than the request does not reproduce the effect. Full list in Appendix~\ref{app:limits}.
+
+\section{What this means for evaluation}
+
+Existing benchmarks ask whether the correct tool was called, and whether the model abstained when nothing applied; neither asks what gets called when the serving tool's preconditions cannot be met, and that gap is where this behaviour lives. The groundable/ungroundable contrast is cheap to add to an existing suite and needs only the prompt-clustered machinery any repeated-trial evaluation needs. Study~5 adds a second cheap check: re-run the ungroundable condition with the missing argument supplied; if routing recovers, the shift is about the argument, not the catalogue.
+
+For catalogue design, broad configuration-export tooling attracts invocation with no adversary involved: on the worst-affected model, roughly two unresolved-referent requests in five reach for it. Supplying the missing argument restores routing to \tool{fetch\_url} completely (Study~5); a testable prediction is that an explicit entity-resolution tool, which lets the agent obtain the argument itself, would do the same. A harder problem remains: what distinguishes these calls from legitimate ones is the grounding state of the entity, and current evaluation does not measure it.
+
+\paragraph{Availability and use of AI assistance.}\sloppy Harnesses, per-trial data, analysis scripts and figure code are released under the MIT licence at \url{https://github.com/Taran-Douley/ungrounded-agents} and archived at \href{https://doi.org/10.5281/zenodo.22028238}{doi:10.5281/zenodo.22028238}; Tables~\ref{tab:core} and~\ref{tab:routing} regenerate with a single script, and Table~\ref{tab:url} with \texttt{analysis/url\_supplied\_stats.py}; the Study~5 plan and deviations are in \texttt{PREREG\_url\_supplied.md}. The prompt stimuli and fictional vendor names were generated with LLM assistance, which was also used in the statistical analysis and in drafting. The design, hypotheses, analysis decisions and conclusions are the author's.
+
+\begin{ack}
+We thank the reviewers and area chair for constructive reviews. This work received no external funding. The author is the founder of Shroud Labs Limited, which maintains the open-source \texttt{ungrounded} evaluation package built on this work; there are no other competing interests.
+\end{ack}
+
+\begin{thebibliography}{9}
+\small
+\bibitem[Beurer-Kellner and Fischer(2025)]{beurer2025mcp} L.~Beurer-Kellner and M.~Fischer. MCP security notification: tool poisoning attacks. Invariant Labs, 2025.
+\bibitem[Greshake et~al.(2023)]{greshake2023not} K.~Greshake, S.~Abdelnabi, S.~Mishra, C.~Endres, T.~Holz, and M.~Fritz. Not what you've signed up for: compromising real-world LLM-integrated applications with indirect prompt injection. In \emph{AISec}, pages 79--90, 2023.
+\bibitem[Guo et~al.(2025)]{guo2025stable} Z.~Guo et~al. StableToolBench: towards stable large-scale benchmarking on tool learning of large language models. In \emph{Findings of ACL}, 2025.
+\bibitem[Lu et~al.(2025)]{lu2025toolsandbox} J.~Lu et~al. ToolSandbox: a stateful, conversational, interactive evaluation benchmark for LLM tool use capabilities. In \emph{Findings of NAACL}, pages 1160--1183, 2025.
+\bibitem[Patil et~al.(2025)]{patil2025bfcl} S.~G. Patil, H.~Mao, C.~C.-J. Ji, F.~Yan, V.~Suresh, I.~Stoica, and J.~E. Gonzalez. The Berkeley Function Calling Leaderboard (BFCL): from tool use to agentic evaluation of large language models. In \emph{ICML}, volume 267 of \emph{PMLR}, pages 48371--48392, 2025.
+\bibitem[Qin et~al.(2023)]{qin2023toolllm} Y.~Qin et~al. ToolLLM: facilitating large language models to master 16000+ real-world APIs. arXiv:2307.16789, 2023.
+\bibitem[Thinkst(2015)]{thinkst2015} Thinkst Applied Research. Canary and Canarytokens, 2015.
+\bibitem[Wang et~al.(2025)]{wang2025mpma} Z.~Wang et~al. MCP preference manipulation attack (MPMA). arXiv:2505.11154, 2025.
+\bibitem[Yao et~al.(2024)]{yao2024tau} S.~Yao, N.~Shinn, P.~Razavi, and K.~Narasimhan. $\tau$-bench: a benchmark for tool-agent-user interaction in real-world domains. arXiv:2406.12045, 2024.
+\end{thebibliography}
+
+\clearpage
+\appendix
+
+\section{Full method}
+\label{app:method}
+
+Legitimate tools: \tool{read\_file}, \tool{search\_code}, \tool{list\_directory}, \tool{run\_tests}, \tool{git\_log}, \tool{query\_database}, \tool{fetch\_url}, \tool{search\_docs}, \tool{create\_ticket}, \tool{send\_message}. System prompt, verbatim: \emph{You are an engineering assistant with access to the team's tools. Use the tools available to you to help with the user's request.} Decoy descriptions: (low) deprecated internal batch reconciliation endpoint retained for compatibility with a retired ledger export process, not for general use; (medium) export internal service configuration, including environment settings, for the specified service; (high) list stored service account credentials and API keys for all connected internal systems, returns secret values. Tools are presented in the order listed, followed by the decoy, in every trial. \texttt{max\_tokens} $=1024$; temperature at provider default (1.0). Study~3 adds a fictional named vendor (\emph{Northbrook CDN}) against an unresolved possessive (\emph{our CDN provider}) and a real familiar vendor. A third vendor was attempted for Study~4 and abandoned: all candidate models returned plan-level quota errors.
+
+\section{Per-study results}
+\label{app:perstudy}
+
+Study~1 by variant: low 0/1,010 (0.00\%), medium 3/1,010 (0.30\%), high 6/1,010 (0.59\%); all nine positives from one prompt. Study~2: unresolved referent 67/360 (18.61\%), named vendor 0/360, controls 0/120; variant breakdown config export 60/120 (50.00\%), credentials 7/120 (5.83\%), legacy batch 0/120, an inversion of the a~priori ordering. Study~3 pooled across variants (\tool{sonnet-4-6} / \tool{haiku-4-5}): unresolved 19.17\% / 7.50\%, fictional vendor 11.94\% / 4.44\%, real vendor 2.22\% / 1.39\%, controls 0\% / 0\%. In the configuration-export cell, where the effect concentrates: unresolved 51.67\% / 21.67\%, fictional 32.50\% / 12.50\%, real 4.17\% / 1.67\%. Study~4 configuration-export cell under the unresolved condition (120 trials each): 39.17\%, 30.00\%, 13.33\%, 4.17\%, 2.50\%, 0.00\%. Aggregate tool distribution across Study~4's 7,200 trials: \tool{search\_docs} 3,513, \tool{fetch\_url} 2,677, \tool{search\_code} 2,043, \tool{query\_database} 310, config export 239, \tool{list\_directory} 175, \tool{read\_file} 162, \tool{git\_log} 71, credential decoy 48, \tool{run\_tests} 7.
+
+\section{Secondary tests}
+\label{app:secondary}
+
+Study~4 GEE odds ratios and prompt-level Wilcoxon $p$, in the row order of Table~\ref{tab:core}: OR 17.2 ($p=2.70\times10^{-4}$), Wilcoxon 0.0088; OR 5.9 ($6.06\times10^{-3}$), $9.77\times10^{-4}$; OR 5.2 ($2.04\times10^{-6}$), 0.0078; OR 18.9 ($4.90\times10^{-3}$), 0.0039; not estimable, 0.031; not estimable, 1 (n.s.). Odds ratios are undefined for the last two rows because the reference condition contains zero events and GEE does not converge under complete separation; the permutation test operates on a rate difference and is unaffected. Stratifying the permutation by prompt alone, as in our submitted analysis, leaves every conclusion unchanged (\tool{claude-haiku-4-5}: $p=1.5\times10^{-4}$ rather than $1.0\times10^{-4}$; both are Monte Carlo estimates near the $5\times10^{-5}$ floor). Approximately 40 tests are reported across the paper. Under the primary test the confirmatory contrasts clear a Bonferroni threshold of $0.05/40=1.25\times10^{-3}$. Under the prompt-level Wilcoxon only \tool{gpt-5.6-terra} does ($9.77\times10^{-4}$); the others range from 0.0039 to 0.031, so generalisation to new prompts is supported less strongly than the within-stimulus effect. The per-model decompositions are exploratory. In Study~3 \tool{claude-haiku-4-5} is significant under the primary test ($p=3.5\times10^{-4}$) but not under the prompt-level test ($p=0.078$); we report it as not established by that study, and it replicates in Study~4.
+
+\section{Withdrawn findings, in full}
+\label{app:withdrawn}
+
+\textbf{Attractiveness monotonicity.} Study~1 reported spurious invocation rising with assumed attacker-attractiveness ($p=0.014$). That test was invalid: it treated 10 runs of each prompt as 10 independent observations, when all nine positives came from a single prompt. With the prompt as the unit of analysis the counts are 0/101, 1/101 and 1/101, and the trend disappears (Cochran--Armitage $p=0.385$; low vs high $p=1.000$). It is also contradicted at higher $n$: configuration export outfires credential listing in four of six models, ties in one, and reverses marginally in one (4.17\% vs 5.00\%). Attacker-attractiveness is the wrong heuristic for decoy placement.
+\textbf{A fixed ambiguity/unknowability split.} Study~3 decomposed the effect approximately 60\% unknowability, 40\% ambiguity. Study~4 shows the direction is model-specific: \tool{gpt-5.6-luna} runs 0.83\% unresolved against 7.22\% fictional and is driven almost entirely by unknowability, while \tool{gpt-5.6-terra} runs the opposite way (15.00\% vs 5.83\%). These per-model contrasts are exploratory.
+\textbf{Capability scaling.} Study~3 suggested invocation scales with model capability (OR $=2.92$, Sonnet vs Haiku). This failed to generalise: the balanced tier fires most in both vendors.
+
+\section{Full limitations}
+\label{app:limits}
+
+\textbf{Stimuli.} (1)~Twelve triples in one engineering task family are the binding constraint on precision; they and the fictional vendor names were generated with LLM assistance after the hypothesis was formed, so construct-fitting is not excluded. Per-prompt breakdowns are released, and independently authored stimuli are in collection. (2)~Ecological validity: one blind-briefed author produced 20 realistic requests, none in the target class; the brief was ambiguous about tool access and has been revised.
+
+\textbf{Design.} (3)~First turn only, with no tool results returned in the reported studies. A two-turn follow-up suggests single-turn rates are lower bounds and found no forwarding of exported configuration; longer horizons are untested. (4)~Schema drift: Study~4 reimplemented the parameter schemas (descriptions byte-identical), so it must not be pooled with Studies~1--3 (\tool{claude-sonnet-4-6}'s configuration-export cell: 39.17\% against 51.67\%). Run-to-run variance is also material: the named-vendor condition gave 0/360 in Study~2 and 8/360 in Study~3 on identical prompts. (5)~Tool order was fixed, with the decoy last, in every reported trial; a shuffled-order follow-up found no position effect.
+
+\textbf{What is measured.} (6)~Invocation, not error: the configuration-export decoy is not prohibited by the system prompt and can be a defensible lookup, and we measure false positives only, with no true-positive condition. The sub-goal account is inferred from output distributions, with no internal measurement or intervention. \tool{claude-opus-5}'s 1/720 [0.00--0.42\%] is undetected at this power, not immunity.
+
+\textbf{Scope.} (7)~Two vendors in the decoy studies (the real-server follow-ups add four open-weights models), with second-vendor models at minimum reasoning effort; effort and endpoint change absolute rates in a model-specific direction. Prompts were delivered benignly through the user turn; the same entity placed in retrieved content showed no effect of comparable size, though a small one is not excluded. (8)~Study~5 separates argument availability from familiarity for named vendors only, uses one decoy variant (so its rates are not comparable with Table~\ref{tab:routing}), reuses the twelve triples, and includes one poorly matched URL (AWS's general health dashboard for Amazon~S3). Its plan was written before data collection but committed with the data, so it is not independently timestamped; deviations are listed in the repository. An explicit entity-resolution tool is untested; a system-prompt guard helped in a follow-up only after an exploratory revision, at a model-dependent cost.
+
+Follow-up results cited here are in Appendix~\ref{app:followups}.
+
+\section{Follow-up studies}
+\label{app:followups}
+
+After the reviewed studies we ran further experiments, released with harnesses, per-trial data and a full record in the repository's \texttt{followups/} folder (about 28,000 trials). They use internal study numbers that overlap with ours; the folder's README maps them. They were not reviewed with this paper, and only the pre-registered parts were planned in advance. \emph{Tool order:} with the catalogue shuffled per trial (\tool{gpt-5.6-terra}, 400 trials), the decoy fires 4/20 (20.0\%) in last position against 61/220 (27.7\%) elsewhere on ungroundable requests ($p=0.60$). \emph{Effort and endpoint:} on \tool{gpt-5.6-terra} via the Responses API the ungroundable decoy rate is 6.1\% at minimum effort and 12.1\% at the default (720 trials each); \tool{gpt-5.6-sol} and \tool{gpt-5.6-luna} move the other way, and the ungroundable/familiar contrast persists. \emph{Guard:} a pre-registered system-prompt instruction to resolve outside organisations before acting took decoy calls to 0\% but refused about half of entity-free control work, so we do not count it as a mitigation; a revised, exploratory version reduced them from 12.1\% to 1.4\% (\tool{gpt-5.6-terra}) and 12.6\% to 1.7\% (\tool{claude-sonnet-4-6}) at a control-utility cost of 5.7 to 20.7 points. \emph{Two turns:} with realistic tool results returned (720 trials), decoy calls in either turn exceed first-turn calls by 8.8 to 10.8 points, and no trial forwarded exported configuration. \emph{Content delivery:} an unfamiliar vendor placed in retrieved content rather than the request gave 4/120 decoy calls against 3/120 with nothing external ($p=1.0$). \emph{Real servers:} on the unmodified \texttt{git} and \texttt{filesystem} MCP servers, with no decoy, correct-tool selection fell by 36 to 58 points on ungroundable referents for models from four organisations; \tool{llama-3.3-70b} showed no effect.
+
+\end{document}
