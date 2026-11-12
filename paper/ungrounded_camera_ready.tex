@@ -17,8 +17,10 @@
 \usepackage{amsmath}
 \usepackage{microtype}
 \usepackage{xcolor}
+\usepackage{graphicx}
 \renewcommand{\ttdefault}{lmtt}
 
+\hypersetup{pdftitle={Ungrounded: Entity Groundability Shifts Tool Routing in LLM Agents},pdfauthor={Taran Douley}}
 \newcommand{\tool}[1]{\texttt{#1}}
 
 \title{Ungrounded: Entity Groundability Shifts Tool Routing in LLM Agents}
@@ -33,7 +35,7 @@
 \maketitle
 
 \begin{abstract}
-A tool-using agent has to decide which tool to call, and whether to call anything at all. Benchmarks score whether that decision was right. We ask what an agent calls when the tool that serves a request is in the catalogue but one of its arguments cannot be obtained. To make this observable we add a decoy to the registry, a tool none of our stimulus tasks requires, so unplanned internal access shows up without adjudicating each call. Across five studies and 16,350 trials the trigger is specific and reproducible: whether the agent can ground an entity in the request. \tool{fetch\_url}, the tool that serves these requests, is called in 78.1\% of trials when the entity is familiar and named, 15.1\% when it is named but unfamiliar (\emph{Northbrook CDN}), and 5.0\% when it is unnamed (\emph{our CDN provider}), with the same gradient in all six models we tested across two vendors. Traffic moves to internal search and, in five of six models, to a configuration-export decoy, which fires on up to 39\% of unnamed-referent requests. Matched controls are at zero throughout. \tool{claude-opus-5} fired once in 720 ungroundable trials while routing to search, so decoy calls are not an inevitable response to an ungroundable entity. A follow-up crossing familiarity with argument availability shows that, for named entities, the missing argument is sufficient: supplying the unfamiliar vendor's URL restores \tool{fetch\_url} to 100\% of trials in all six models, and decoy calls to zero. We observe only the first turn, so we treat these calls as unplanned privileged access, not demonstrated errors.
+A tool-using agent has to decide which tool to call, and whether to call anything at all. Benchmarks score whether that decision was right. We ask what an agent calls when the tool that serves a request is in the catalogue but one of its arguments cannot be obtained. To make this observable we add a decoy to the registry, a tool none of our stimulus tasks requires, so unplanned internal access shows up without adjudicating each call. Across five studies and 16,350 trials the trigger is specific and reproducible: whether the agent can ground an entity in the request. \tool{fetch\_url}, the tool that serves these requests, is called in 78.1\% of trials when the entity is familiar and named, 15.1\% when it is named but unfamiliar (\emph{Northbrook CDN}), and 5.0\% when it is unnamed (\emph{our CDN provider}), with the same gradient in all six models we tested across two vendors. Traffic moves to internal search and, in five of six models, to a configuration-export decoy, which fires on up to 39\% of unnamed-referent requests. Matched controls are at zero throughout. \tool{claude-opus-5} fired once in 720 ungroundable trials while routing to search, so decoy calls are not an inevitable response to an ungroundable entity. A follow-up crossing familiarity with argument availability shows where groundability acts: for named entities, through the argument it leaves the agent unable to supply. Supplying it is sufficient: supplying the unfamiliar vendor's URL restores \tool{fetch\_url} to 100\% of trials in all six models, and decoy calls to zero. We observe only the first turn, so we treat these calls as unplanned privileged access, not demonstrated errors.
 \end{abstract}
 
 \section{Introduction}
@@ -50,7 +52,7 @@ We built the decoy as a tripwire, assuming benign agents would leave it alone, a
 \item We show that entity groundability shifts tool routing, separating an unnamed referent from an unfamiliar named entity with matched prompts.
 \item We report routing directly: the serving tool is chosen when the entity is groundable and largely abandoned when it is not, in every model tested.
 \item We replicate across six models and two vendors (7,200 trials) with prompt-stratified inference, and find one model in which decoy invocation is not detectable at this power, a null not explained by abstention.
-\item We separate familiarity from argument availability (Study~5): for named vendors, supplying the missing URL removes the shift entirely, in every model.
+\item We locate where groundability acts (Study~5): for named vendors it works through the argument it makes unavailable, and supplying the missing URL removes the shift entirely, in every model.
 \item We propose a cheap groundable/ungroundable contrast for existing tool-use suites, and retract three earlier hypotheses with the data that overturned them.
 \end{enumerate}
 
@@ -88,20 +90,17 @@ Model & Ungroundable [95\% CI] & Groundable & Strat.\ perm.\ $p$ & Prompt-level 
 \end{table}
 
 \begin{table}[t]
-\caption{Tool routing by grounding condition: share of trials invoking each tool at least once. Left: pooled over six models. Right: \tool{fetch\_url} per model.}
+\caption{Tool routing by grounding condition, pooled over six models: share of trials invoking each tool at least once. Per-model \tool{fetch\_url} rates are in Figure~\ref{fig:routing}.}
 \label{tab:routing}
 \centering
-\footnotesize\setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{lccc@{\hspace{1em}}lccc}
+\footnotesize\setlength{\tabcolsep}{6pt}
+\begin{tabular}{lccc}
 \toprule
-Tool (pooled) & Unnam. & Unfam. & Famil. & \tool{fetch\_url} & Unnam. & Unfam. & Famil. \\
+Tool & Unnamed & Unfamiliar & Familiar \\
 \midrule
-\tool{fetch\_url} (serving) & 5.0\% & 15.1\% & 78.1\% & \tool{claude-opus-5}     & 0.0\%  & 0.0\%  & 83.3\% \\
-internal search            & 67.7\% & 77.2\% & 14.7\% & \tool{claude-sonnet-4-6} & 4.7\%  & 28.6\% & 82.5\% \\
-config export (decoy)      & 5.0\% & 5.8\% & 0.3\%   & \tool{gpt-5.6-terra}     & 7.8\%  & 23.3\% & 82.2\% \\
-                           &       &       &         & \tool{gpt-5.6-luna}      & 16.4\% & 22.2\% & 79.7\% \\
-                           &       &       &         & \tool{gpt-5.6-sol}       & 0.0\%  & 5.8\%  & 77.2\% \\
-                           &       &       &         & \tool{claude-haiku-4-5}  & 0.8\%  & 10.6\% & 63.9\% \\
+\tool{fetch\_url} (serving) & 5.0\% & 15.1\% & 78.1\% \\
+internal search            & 67.7\% & 77.2\% & 14.7\% \\
+config export (decoy)      & 5.0\% & 5.8\% & 0.3\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -112,14 +111,21 @@ config export (decoy)      & 5.0\% & 5.8\% & 0.3\%   & \tool{gpt-5.6-terra}     
 
 \paragraph{It replicates.} Table~\ref{tab:core} gives the core contrast across six models; controls were 0/120 on every model. The within-stimulus effect is clear in five models; the prompt-level evidence is weaker but points the same way, and in four of the five every firing prompt moved in the predicted direction.
 
-\paragraph{The serving tool is present and abandoned.} Whether the agent uses \tool{fetch\_url} depends almost entirely on whether the entity can be grounded (Table~\ref{tab:routing}); the gradient holds in every model independently.
+\paragraph{The serving tool is present and abandoned.} Whether the agent uses \tool{fetch\_url} depends almost entirely on whether the entity can be grounded (Figure~\ref{fig:routing}, Table~\ref{tab:routing}); the gradient holds in every model independently.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{routing.pdf}
+\caption{Study~4 routing: share of trials calling \tool{fetch\_url} under each grounding condition, per model and pooled (360 trials per point; 2,160 pooled). The same request text differs only in how the vendor is referred to.}
+\label{fig:routing}
+\end{figure}
 
 \section{What we think is happening}
 \label{sec:mech}
 
 Our reading is this, and it is an interpretation of output distributions; we did not measure or intervene on a grounding mechanism. When an agent cannot ground an entity in a request, because it is unnamed or named but unfamiliar, the tool that would have served the request stops being usable, and the agent substitutes an internal-lookup tool while it works out what the entity is.
 
-Two explanations usually get offered for spurious tool calls, and this data bears on both. Semantic collision, the decoy description resembling the request, is unlikely by construction: neither a configuration export nor a credential dump sits near \emph{fetch a status page}, and the matched conditions change only the referent. A capability vacuum, where the decoy fires because nothing legitimate covers the task, is ruled out by Table~\ref{tab:routing}: the serving tool is used 78.1\% of the time when the entity is groundable. The manipulation is not clean, however: an ungroundable entity also removes the URL \tool{fetch\_url} needs, so a missing-argument account, or the model's memorised knowledge of familiar vendors, would produce the same pattern. Study~5 separates them for named vendors (Table~\ref{tab:url}). Supplying the URL of an unfamiliar vendor raises \tool{fetch\_url} use from 17.8\% to 100\% pooled, and to 100\% in each of the six models (H1: every model $p<10^{-4}$ within stimulus, prompt-level Wilcoxon $p\le0.014$ after Holm). Once the URL is present, unfamiliarity makes no further difference (H2 not supported): unfamiliar-with-URL is never below familiar-with-URL. The only gap runs the other way, in \tool{gpt-5.6-terra} (100\% vs 91.7\%), and comes from a single prompt whose URL we chose badly: for \emph{the uptime report from Amazon S3} we supplied AWS's general health dashboard, and the model called no tool. Internal search and decoy calls fall to zero in every URL-supplied cell. For named entities, then, the missing argument is sufficient to explain the shift. This does not show that grounding plays no part: the URL also makes the request more explicit, the URL cells sit at or near ceiling, so a small familiarity effect could be hidden, and the unnamed referent was not tested, since a URL cannot be supplied for an entity nobody has named without also grounding it.
+Two explanations usually get offered for spurious tool calls, and this data bears on both. Semantic collision, the decoy description resembling the request, is unlikely by construction: neither a configuration export nor a credential dump sits near \emph{fetch a status page}, and the matched conditions change only the referent. A global capability vacuum, where the decoy fires because nothing in the catalogue covers the task, is ruled out by Table~\ref{tab:routing}: the serving tool is used 78.1\% of the time when the entity is groundable. A local one, where the tool is present but cannot be used without its argument, is not. The manipulation is not clean, however: an ungroundable entity also removes the URL \tool{fetch\_url} needs, so a missing-argument account, or the model's memorised knowledge of familiar vendors, would produce the same pattern. Study~5 separates them for named vendors (Table~\ref{tab:url}). Supplying the URL of an unfamiliar vendor raises \tool{fetch\_url} use from 17.8\% to 100\% pooled, and to 100\% in each of the six models (H1: every model $p<10^{-4}$ within stimulus, prompt-level Wilcoxon $p\le0.014$ after Holm). Once the URL is present, unfamiliarity makes no further difference (H2 not supported): unfamiliar-with-URL is never below familiar-with-URL. The only gap runs the other way, in \tool{gpt-5.6-terra} (100\% vs 91.7\%), and comes from a single prompt whose URL we chose badly: for \emph{the uptime report from Amazon S3} we supplied AWS's general health dashboard, and the model called no tool. Internal search and decoy calls fall to zero in every URL-supplied cell. For named entities, then, groundability acts through the argument: in deployment a URL reaches \tool{fetch\_url} only if the agent can resolve the entity, and once the argument is supplied the entity's familiarity adds nothing measurable. The missing argument is sufficient to explain the shift, which also says where to intervene. This does not show that grounding plays no part: the URL also makes the request more explicit, the URL cells sit at or near ceiling, so a small familiarity effect could be hidden, and the unnamed referent was not tested, since a URL cannot be supplied for an entity nobody has named without also grounding it.
 
 \begin{table}[t]
 \caption{Study~5: share of trials calling \tool{fetch\_url} (decoy invocation in brackets), named vendors only, configuration-export decoy, 120 trials per cell. Pooled row: 720 trials per cell.}
@@ -144,7 +150,7 @@ Pooled                   & 79.2 (0.6) & 98.3 (0) & 17.8 (17.9) & 100 (0) \\
 \end{tabular}
 \end{table}
 
-On our reading, now supported for named entities by Study~5, the two explanations are consecutive. Grounding failure creates the vacuum: \tool{fetch\_url} needs a URL, there is none to supply for a provider nobody can identify, and the tool quietly becomes inapplicable. The agent then behaves as though working out the entity were a prerequisite, which may be a legitimate intermediate step; without returned tool results we cannot tell. It routes to internal search (67.7\% of unnamed-referent trials, 77.2\% of unfamiliar-vendor trials) and picks up the configuration export along the way. It would also explain which decoy fires: exporting a service configuration is a defensible way to find out which vendor an organisation uses; dumping credentials is not.
+On our reading, now supported for named entities by Study~5, the two explanations are consecutive. Grounding failure creates the local vacuum: \tool{fetch\_url} needs a URL, there is none to supply for a provider nobody can identify, and the tool quietly becomes inapplicable. The agent then behaves as though working out the entity were a prerequisite, which may be a legitimate intermediate step; without returned tool results we cannot tell. It routes to internal search (67.7\% of unnamed-referent trials, 77.2\% of unfamiliar-vendor trials) and picks up the configuration export along the way. It would also explain which decoy fires: exporting a service configuration is a defensible way to find out which vendor an organisation uses; dumping credentials is not.
 
 \paragraph{The null model is not being cautious.} \tool{claude-opus-5} does not avoid the decoy by declining to act: its zero-tool rate is 0.0\% in every condition, and it calls \tool{search\_docs} in 716 of 720 ungroundable trials. Abstention does not explain the cross-model pattern either: under an unnamed referent, \tool{claude-haiku-4-5} abstains on 76.7\% of trials and still fires at 5.28\%, \tool{gpt-5.6-luna} abstains on 2.2\% and fires at 0.83\%, and \tool{gpt-5.6-terra} abstains on 4.7\% and fires at 15.00\%. Whatever distinguishes \tool{claude-opus-5} is not reticence but routing under uncertainty; cross-model differences do not identify its cause. At twelve triples we cannot separate a true null from a small effect, so we report it as undetected, not immune.
 
@@ -155,7 +161,7 @@ Three of our hypotheses did not hold up, and we report them rather than drop the
 
 \section{Limitations}
 
-The binding constraint is the stimulus set: twelve triples, generated with LLM assistance after we had formed the hypothesis, in one engineering task family, so construct-fitting cannot be ruled out and prompt-level inference is weaker than within-stimulus inference (Table~\ref{tab:core}). Trials are single-turn and return no tool results, so a decoy or search call may be a legitimate intermediate step toward resolving the entity; we measure invocation, not error or consequence. Study~5 separates groundability from argument availability for named vendors only; the unnamed referent and the entity-resolution tool our account predicts remain untested. Follow-up studies released with the data (Appendix~\ref{app:followups}) bear on several of these limits: shuffling tool order changes nothing, a second turn adds roughly a quarter more decoy calls, and an unfamiliar entity placed in retrieved content rather than the request does not reproduce the effect. Full list in Appendix~\ref{app:limits}.
+The binding constraint is the stimulus set: twelve triples, generated with LLM assistance after we had formed the hypothesis, in one engineering task family, so construct-fitting cannot be ruled out and prompt-level inference is weaker than within-stimulus inference (Table~\ref{tab:core}). Trials are single-turn and return no tool results, so a decoy or search call may be a legitimate intermediate step toward resolving the entity; we measure invocation, not error or consequence. Study~5 separates groundability from argument availability for named vendors only; the unnamed referent and the entity-resolution tool our account predicts remain untested. Follow-ups (Appendix~\ref{app:followups}) find no tool-order effect, about a quarter more decoy calls in a second turn, and no comparable effect when the entity arrives in retrieved content. Full list in Appendix~\ref{app:limits}.
 
 \section{What this means for evaluation}
 
@@ -163,7 +169,7 @@ Existing benchmarks ask whether the correct tool was called, and whether the mod
 
 For catalogue design, broad configuration-export tooling attracts invocation with no adversary involved: on the worst-affected model, roughly two unresolved-referent requests in five reach for it. Supplying the missing argument restores routing to \tool{fetch\_url} completely (Study~5); a testable prediction is that an explicit entity-resolution tool, which lets the agent obtain the argument itself, would do the same. A harder problem remains: what distinguishes these calls from legitimate ones is the grounding state of the entity, and current evaluation does not measure it.
 
-\paragraph{Availability and use of AI assistance.}\sloppy Harnesses, per-trial data, analysis scripts and figure code are released under the MIT licence at \url{https://github.com/Taran-Douley/ungrounded-agents} and archived at \href{https://doi.org/10.5281/zenodo.22028238}{doi:10.5281/zenodo.22028238}; Tables~\ref{tab:core} and~\ref{tab:routing} regenerate with a single script, and Table~\ref{tab:url} with \texttt{analysis/url\_supplied\_stats.py}; the Study~5 plan and deviations are in \texttt{PREREG\_url\_supplied.md}. The prompt stimuli and fictional vendor names were generated with LLM assistance, which was also used in the statistical analysis and in drafting. The design, hypotheses, analysis decisions and conclusions are the author's.
+\paragraph{Availability and use of AI assistance.}\sloppy Harnesses, per-trial data, analysis scripts and figure code are released under the MIT licence at \url{https://github.com/Taran-Douley/ungrounded-agents} and archived at \href{https://doi.org/10.5281/zenodo.22285495}{doi:10.5281/zenodo.22285495}; Tables~\ref{tab:core} and~\ref{tab:routing} regenerate with a single script, and Table~\ref{tab:url} with \texttt{analysis/url\_supplied\_stats.py}; the Study~5 plan and deviations are in \texttt{PREREG\_url\_supplied.md}. The prompt stimuli and fictional vendor names were generated with LLM assistance, which was also used in the statistical analysis and in drafting. The design, hypotheses, analysis decisions and conclusions are the author's.
 
 \begin{ack}
 We thank the reviewers and area chair for constructive reviews. This work received no external funding. The author is the founder of Shroud Labs Limited, which maintains the open-source \texttt{ungrounded} evaluation package built on this work; there are no other competing interests.
