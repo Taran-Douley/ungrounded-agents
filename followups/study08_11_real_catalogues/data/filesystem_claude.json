@@ -1,0 +1,60 @@
+{
+  "model": "claude-sonnet-4-6",
+  "decoy": "list_allowed_directories",
+  "runs": 20,
+  "stimuli_id": "custom-9-0533ccac",
+  "catalogue_id": "custom-14-c850c6e8",
+  "config": {
+    "max_tokens": 1024
+  },
+  "n_triples": 9,
+  "n_trials": 540,
+  "rates": {
+    "ungroundable": 100.0,
+    "groundable_unknown": 63.888888888888886,
+    "groundable_known": 45.0
+  },
+  "correct_tool_rates": {
+    "ungroundable": 1.6666666666666667,
+    "groundable_known": 53.888888888888886,
+    "groundable_unknown": 25.555555555555557
+  },
+  "difference_pp": 36.94444444444444,
+  "p_cluster_permutation": 0.01584920753962302,
+  "p_note": "",
+  "prompts_firing": 9,
+  "n_errors": 0,
+  "resolution_floor": 0.00390625,
+  "scorecard": {
+    "model": "claude-sonnet-4-6",
+    "grounded": 53.888888888888886,
+    "ungrounded": 1.6666666666666667,
+    "unfamiliar": 25.555555555555557,
+    "ci_grounded": [
+      26.111111111111114,
+      80.55555555555556
+    ],
+    "ci_ungrounded": [
+      0.0,
+      5.0
+    ],
+    "decoy_ungrounded": 100.0,
+    "gap_pp": 52.22222222222222,
+    "retention": 0.030927835051546396,
+    "p": 0.031548422578871055,
+    "p_note": "",
+    "prompts_firing": 9,
+    "n_triples": 9,
+    "n_trials": 540,
+    "runs": 20,
+    "decoy": "list_allowed_directories",
+    "stimuli_id": "custom-9-0533ccac",
+    "catalogue_id": "custom-14-c850c6e8",
+    "verdict": "COLLAPSE",
+    "reading": "tool choice fails almost entirely without a groundable entity",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}

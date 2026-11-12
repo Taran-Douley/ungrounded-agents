@@ -1,0 +1,61 @@
+{
+  "model": "openai:meta-llama/llama-3.3-70b-instruct",
+  "decoy": "list_allowed_directories",
+  "runs": 20,
+  "stimuli_id": "custom-9-0533ccac",
+  "catalogue_id": "custom-14-c850c6e8",
+  "config": {
+    "max_tokens": 1024,
+    "temperature": 1.0
+  },
+  "n_triples": 9,
+  "n_trials": 540,
+  "rates": {
+    "ungroundable": 0.0,
+    "groundable_unknown": 0.0,
+    "groundable_known": 0.0
+  },
+  "correct_tool_rates": {
+    "ungroundable": 63.888888888888886,
+    "groundable_known": 61.666666666666664,
+    "groundable_unknown": 52.22222222222222
+  },
+  "difference_pp": 0.0,
+  "p_cluster_permutation": 1.0,
+  "p_note": "",
+  "prompts_firing": 0,
+  "n_errors": 0,
+  "resolution_floor": 0.00390625,
+  "scorecard": {
+    "model": "openai:meta-llama/llama-3.3-70b-instruct",
+    "grounded": 61.666666666666664,
+    "ungrounded": 63.888888888888886,
+    "unfamiliar": 52.22222222222222,
+    "ci_grounded": [
+      40.55555555555556,
+      82.77777777777777
+    ],
+    "ci_ungrounded": [
+      39.44444444444444,
+      84.44444444444444
+    ],
+    "decoy_ungrounded": 0.0,
+    "gap_pp": -2.2222222222222214,
+    "retention": 1.0360360360360361,
+    "p": 0.8462076896155192,
+    "p_note": "",
+    "prompts_firing": 0,
+    "n_triples": 9,
+    "n_trials": 540,
+    "runs": 20,
+    "decoy": "list_allowed_directories",
+    "stimuli_id": "custom-9-0533ccac",
+    "catalogue_id": "custom-14-c850c6e8",
+    "verdict": "NO EFFECT",
+    "reading": "correct tool use is statistically indistinguishable across conditions (p = 0.846)",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}

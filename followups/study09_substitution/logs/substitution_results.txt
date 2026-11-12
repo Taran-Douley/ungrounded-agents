@@ -1,0 +1,63 @@
+==============================================================================
+STUDY 9 - substitution is predictable from the tool schemas
+==============================================================================
+  git: ambient argument(s) required by most tools = ['repo_path']
+  filesystem: ambient argument(s) required by most tools = ['path']
+
+H1  the substituted tool requires fewer arguments than the expected one
+------------------------------------------------------------------------------
+  cell                      n subs   mean req(exp)  mean req(sub)  delta    sign test p
+  git x claude              111      2.00           1.16           -0.84    2.02e-28
+  git x gpt                 154      1.99           1.34           -0.65    1.58e-30
+  filesystem x claude       394      1.35           0.22           -1.13    3.92e-86
+  filesystem x gpt          535      1.33           0.01           -1.33    2.85e-160   (void cell)
+  POOLED (void excluded)    659      1.61           0.64           -0.97    2.56e-141
+    lower-arity 554, higher-arity 16, equal 89
+    null model (uniform tool from the same catalogue): mean delta -0.25 vs observed -0.97
+
+H2  the substitute lacks the expected tool's referent argument
+------------------------------------------------------------------------------
+  cell                      n with a referent arg    substitute drops it
+  git x claude              111                      111/111 = 100.0%
+  git x gpt                 152                      152/152 = 100.0%
+  filesystem x claude       161                      161/161 = 100.0%
+  filesystem x gpt          237                      237/237 = 100.0%   (void cell)
+  POOLED (void excluded)    424                      424/424 = 100.0%
+
+  CAVEAT: most referent arguments are unique to their own tool, so
+  the figure above is largely definitional. Non-trivial subset - cases
+  where another tool requiring the same argument existed:
+    53/53 = 100.0% still avoided it
+    (all from one argument pair in one catalogue; treat as suggestive)
+
+H4  an argument-light tool absorbs most of the misselection
+------------------------------------------------------------------------------
+  Not definitional, and the practically useful result: a catalogue's
+  low-arity orienting tool acts as a sink for substitution.
+  catalogue     top substitute                share of all misselections
+  git           git_status ['repo_path']      122/265 = 46.0%
+  filesystem    list_allowed_directories []   339/394 = 86.0%
+
+  Arity is necessary but not sufficient: git_status and git_diff_staged
+  both require one argument, and substitution concentrates on the former.
+  Among equally argument-light tools, the one that reads as 'orient me'
+  wins. Arity predicts the candidate set; semantics picks within it.
+
+H3  the pattern is stronger when the referent cannot be grounded
+------------------------------------------------------------------------------
+  condition               n subs   mean arity delta    drops referent arg
+  groundable_known        128      -1.03               89/89 = 100.0%
+  groundable_unknown      189      -0.85               93/93 = 100.0%
+  ungroundable            342      -1.01               242/242 = 100.0%
+
+  most common substitutions (ungroundable condition)
+    [git] git_show['repo_path', 'revision']  ->  git_log['repo_path']   x73
+    [filesystem] search_files['path', 'pattern']  ->  list_allowed_directories[]   x37
+    [git] git_diff['repo_path', 'target']  ->  git_status['repo_path']   x25
+    [git] git_checkout['branch_name', 'repo_path']  ->  git_branch['branch_type', 'repo_path']   x23
+    [filesystem] list_directory['path']  ->  list_allowed_directories[]   x20
+    [filesystem] read_text_file['path']  ->  list_allowed_directories[]   x20
+    [filesystem] get_file_info['path']  ->  list_allowed_directories[]   x20
+    [filesystem] read_multiple_files['paths']  ->  list_allowed_directories[]   x20
+    [filesystem] list_directory_with_sizes['path']  ->  list_allowed_directories[]   x20
+    [filesystem] edit_file['edits', 'path']  ->  list_allowed_directories[]   x20

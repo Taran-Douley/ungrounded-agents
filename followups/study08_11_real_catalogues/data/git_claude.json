@@ -1,0 +1,60 @@
+{
+  "model": "claude-sonnet-4-6",
+  "decoy": "git_status",
+  "runs": 20,
+  "stimuli_id": "custom-11-3c2a633d",
+  "catalogue_id": "custom-12-6a6c23d8",
+  "config": {
+    "max_tokens": 1024
+  },
+  "n_triples": 11,
+  "n_trials": 660,
+  "rates": {
+    "ungroundable": 8.636363636363637,
+    "groundable_unknown": 14.090909090909092,
+    "groundable_known": 7.7272727272727275
+  },
+  "correct_tool_rates": {
+    "ungroundable": 13.181818181818182,
+    "groundable_known": 62.27272727272727,
+    "groundable_unknown": 69.0909090909091
+  },
+  "difference_pp": 3.636363636363636,
+  "p_cluster_permutation": 0.4927753612319384,
+  "p_note": "",
+  "prompts_firing": 5,
+  "n_errors": 0,
+  "resolution_floor": 0.0009765625,
+  "scorecard": {
+    "model": "claude-sonnet-4-6",
+    "grounded": 62.27272727272727,
+    "ungrounded": 13.181818181818182,
+    "unfamiliar": 69.0909090909091,
+    "ci_grounded": [
+      35.0,
+      88.18181818181819
+    ],
+    "ci_ungrounded": [
+      0.0,
+      31.363636363636367
+    ],
+    "decoy_ungrounded": 8.636363636363637,
+    "gap_pp": 49.09090909090909,
+    "retention": 0.2116788321167883,
+    "p": 0.0071996400179991,
+    "p_note": "",
+    "prompts_firing": 5,
+    "n_triples": 11,
+    "n_trials": 660,
+    "runs": 20,
+    "decoy": "git_status",
+    "stimuli_id": "custom-11-3c2a633d",
+    "catalogue_id": "custom-12-6a6c23d8",
+    "verdict": "BRITTLE",
+    "reading": "tool choice mostly fails without a groundable entity",
+    "version": "0.3.0",
+    "measured": "2026-09-05",
+    "n_errors": 0,
+    "error_note": ""
+  }
+}

@@ -1,12 +1,13 @@
 > **Want to measure this on your own agent?** The harness is packaged as an
 > installable eval with a six-model leaderboard:
-> [`pip install ungrounded`](https://github.com/ShroudLabs/ungrounded)
+> [`pip install ungrounded`](https://github.com/Taran-Douley/ungrounded)
 
 # Raw per-trial data
 
 Every row is one trial: one prompt sent to one model with one decoy variant in the
 catalogue, recording the complete set of tool calls in the first assistant turn.
-No tool results are returned to the agent — all studies are single-turn.
+No tool results are returned to the agent: all five paper studies are single-turn.
+Multi-turn and real-server follow-ups are in [`followups/`](../followups/README.md).
 
 ## Files
 
@@ -16,8 +17,10 @@ No tool results are returned to the agent — all studies are single-turn.
 | `exp2_results.csv` | Study 2 — matched pairs | 840 | claude-sonnet-4-6 |
 | `exp3_results.csv` | Study 3 — three-condition isolation | 2,400 | claude-sonnet-4-6, claude-haiku-4-5-20251001 |
 | `cross_vendor_results.csv` | Study 4 — cross-vendor | 8,252 | six models, two vendors |
+| `url_supplied_results.csv` | Study 5 — supplied URL (paper Table 3) | 2,880 | six models, two vendors |
+| `url_supplied_results_pilot.csv` | Study 5 pilot, **excluded from analysis** | — | six models |
 
-Total: 13,470 non-error trials after filtering (see `status` below).
+Total: 16,350 non-error trials in the paper's five studies after filtering (see `status` below). Study 5 uses the same schema as Study 4 and is analysed by `analysis/url_supplied_stats.py`.
 
 ## Schemas
 
